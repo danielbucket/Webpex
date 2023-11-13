@@ -1,8 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
 	entry: {
@@ -15,16 +15,15 @@ module.exports = {
 	},
 	target: 'web',
 	devtool: 'source-map',
+
 	optimization: {
+		minimize: true,
 		minimizer: [
-			new UglifyJsPlugin({
-				cache: true,
-				parallel: true,
-				sourceMap: true,
-			}),
-			new OptimizeCSSAssetsPlugin({}),
+			new TerserPlugin(),
+			new CssMinimizerPlugin(),
 		],
 	},
+
 	module: {
 		rules: [
 			{
@@ -36,16 +35,16 @@ module.exports = {
 			},
 			{
 				test: /\.html$/,
-				use: [
-					{
-						loader: 'html-loader',
-						options: { minimze:true },
+				use: [{
+					loader: "html-loader",
+					options: {
+						minimize:true,
 					},
-				],
+				}],
 			},
 			{
-				test: /\.jpg$/,
-				use: [{ loader: 'usr-loader' }],
+				test: /\.(png|jpe?g|gif)$/i,
+				use: [{ loader: 'file-loader' }],
 			},
 			{
 				test: /\.css$/,
